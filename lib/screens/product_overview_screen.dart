@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttershop/providers/cart.dart';
 import 'package:fluttershop/providers/products.dart';
 import 'package:fluttershop/screens/cart_screen.dart';
+import 'package:fluttershop/widgets/app_drawer.dart';
 import 'package:fluttershop/widgets/badge.dart';
 import 'package:fluttershop/widgets/products_grid.dart';
 import 'package:provider/provider.dart';
@@ -60,9 +61,12 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                 Navigator.of(context).pushNamed(CartScreen.routeName);
               },
             ),
-          )
+          ),
+          Icon(Icons.tonality_outlined),
+          Icon(Icons.tonality_outlined),
         ],
       ),
+      drawer: AppDrawer(),
       body: ProductsGrid(_showOnlyFav),
     );
   }
