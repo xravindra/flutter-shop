@@ -111,9 +111,20 @@ class Products with ChangeNotifier {
     }
   }
 
-  void updateProduct(String id, Product newProduct) {
+  Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
+      final urlData =
+          'https://flutter-update-3ae26-default-rtdb.firebaseio.com/products/$id.json';
+      await http.patch(
+        Uri.parse(urlData),
+        body: json.encode({
+          'title': newProduct.title,
+          'description': newProduct.description,
+          'price': newProduct.price,
+          'imageURL': newProduct.imageURL,
+        }),
+      );
       _items[prodIndex] = newProduct;
       notifyListeners();
     } else {
@@ -122,7 +133,18 @@ class Products with ChangeNotifier {
   }
 
   void deleteProduct(String id) {
-    _items.removeWhere((prod) => prod.id == id);
+    final urlData =
+        'https://flutter-update-3ae26-default-rtdb.firebaseio.com/products/$id.json';
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    var existingProduct = _items[existingProductIndex];
+    http.delete(Uri.parse(urlData)).then((response) {
+      print(response.statusCode);
+      existingProduct = null;
+    }).catchError((_) {
+      _items.insert(existingProductIndex, existingProduct);
+      notifyListeners();
+    });
+    _items.removeAt(existingProductIndex);
     notifyListeners();
   }
 }
