@@ -135,15 +135,16 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final urlData =
-        'https://flutter-update-3ae26-default-rtdb.firebaseio.com/products/$id';
+        'https://flutter-update-3ae26-default-rtdb.firebaseio.com/products/$id.json';
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
 
     _items.removeAt(existingProductIndex);
     notifyListeners();
 
-    final response = await http.delete(Uri.parse(urlData));
-    if (response.statusCode >= 400) {
+    try {
+      await http.delete(Uri.parse(urlData));
+    } catch (e) {
       _items.insert(existingProductIndex, existingProduct);
       notifyListeners();
       throw HttpException('Could not delete product.');
