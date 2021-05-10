@@ -8,11 +8,13 @@ class Auth with ChangeNotifier {
   DateTime _exp;
   String _userId;
 
-  Future<void> login(String mobileNumber, String password) async {
+  void _authenticate(
+      String mobileNumber, String password, String action) async {
     print(mobileNumber);
     print(password);
     try {
-      const urlData = 'https://kalps-esanskar-backend.herokuapp.com/api/users/login';
+      final urlData =
+          'https://kalps-esanskar-backend.herokuapp.com/api/users/$action';
       final resp = await http.post(
         Uri.parse(urlData),
         headers: {
@@ -30,15 +32,11 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<void> signup(String mobileNumber, String password) async {
-    const urlData = 'https://kalps-esanskar-backend.herokuapp.com/api/users/login';
-    final resp = await http.post(
-      Uri.parse(urlData),
-      body: json.encode({
-        'mobileNumber': mobileNumber,
-        'password': password,
-      }),
-    );
-    print(resp);
+  Future<void> login(String mobileNumber, String password) {
+    _authenticate(mobileNumber, password, 'login');
+  }
+
+  Future<void> signup(String mobileNumber, String password) {
+    _authenticate(mobileNumber, password, 'sign-up');
   }
 }

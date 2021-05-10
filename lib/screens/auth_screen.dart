@@ -156,6 +156,7 @@ class _AuthCardState extends State<AuthCard> {
             child: Column(
               children: [
                 TextFormField(
+                  initialValue: '9999999999',
                   decoration: InputDecoration(labelText: 'Mobile'),
                   keyboardType: TextInputType.number,
                   validator: (value) {
