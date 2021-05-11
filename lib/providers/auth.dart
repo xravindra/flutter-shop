@@ -20,6 +20,10 @@ class Auth with ChangeNotifier {
     return null;
   }
 
+  String get userId {
+    return _userId;
+  }
+
   void _authenticate(
       String mobileNumber, String password, String action) async {
     try {
@@ -62,5 +66,12 @@ class Auth with ChangeNotifier {
 
   Future<void> signup(String mobileNumber, String password) async {
     return _authenticate(mobileNumber, password, 'sign-up');
+  }
+
+  void logout() {
+    _token = null;
+    _userId = null;
+    _exp = null;
+    notifyListeners();
   }
 }
