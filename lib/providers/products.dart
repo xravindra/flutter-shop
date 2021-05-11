@@ -41,6 +41,10 @@ class Products with ChangeNotifier {
     // ),
   ];
 
+  final String authToken;
+
+  Products(this.authToken, this._items);
+
   List<Product> get items {
     return [..._items];
   }
@@ -54,7 +58,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    const urlData =
+    final urlData =
         'https://flutter-update-3ae26-default-rtdb.firebaseio.com/products.json';
     try {
       final response = await http.get(Uri.parse(urlData));

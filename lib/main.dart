@@ -21,36 +21,40 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (c) => Auth(),
+        ChangeNotifierProvider.value(
+          value: Auth(),
         ),
-        ChangeNotifierProvider(
-          create: (c) => Products(),
+        ChangeNotifierProxyProvider<Auth, Products>(
+          update: (ctx, auth, previousProducts) => Products(
+            auth.token,
+            previousProducts == null ? [] : previousProducts.items,
+          ),
         ),
-        ChangeNotifierProvider(
-          create: (c) => Cart(),
+        ChangeNotifierProvider.value(
+          value: Cart(),
         ),
         ChangeNotifierProvider(
           create: (c) => Orders(),
         ),
       ],
-      child: MaterialApp(
-        title: 'My Shop',
-        theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.deepOrange,
-          fontFamily: 'Lato',
+      child: Consumer<Auth>(
+        builder: (ctx, auth, _) => MaterialApp(
+          title: 'My Shop',
+          theme: ThemeData(
+            primarySwatch: Colors.purple,
+            accentColor: Colors.deepOrange,
+            fontFamily: 'Lato',
+          ),
+          home: auth.isAuth ? ProductOverviewScreen() : AuthScreen(),
+          // home: SamplePlayer(),
+          routes: {
+            CartScreen.routeName: (c) => CartScreen(),
+            ProductDetailScreen.routeName: (c) => ProductDetailScreen(),
+            OrdersScreen.routeName: (c) => OrdersScreen(),
+            UserProductsScreen.routeName: (c) => UserProductsScreen(),
+            EditProductScreen.routeName: (c) => EditProductScreen(),
+          },
         ),
-        home: AuthScreen(),
-        // home: SamplePlayer(),
-        routes: {
-
-          CartScreen.routeName: (c) => CartScreen(),
-          ProductDetailScreen.routeName: (c) => ProductDetailScreen(),
-          OrdersScreen.routeName: (c) => OrdersScreen(),
-          UserProductsScreen.routeName: (c) => UserProductsScreen(),
-          EditProductScreen.routeName: (c) => EditProductScreen(),
-        },
       ),
     );
   }

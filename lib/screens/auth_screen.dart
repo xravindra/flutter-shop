@@ -98,6 +98,12 @@ class _AuthCardState extends State<AuthCard> {
   bool _isLoading = false;
   final _passwordController = TextEditingController();
 
+  @override
+  void initState() {
+    _passwordController.text = '999999';
+    super.initState();
+  }
+
   void _showAlertDialog(String message) {
     showDialog(
       context: context,
@@ -200,6 +206,9 @@ class _AuthCardState extends State<AuthCard> {
                   decoration: InputDecoration(labelText: 'Password'),
                   obscureText: true,
                   controller: _passwordController,
+                  onFieldSubmitted: (_) {
+                    _submit();
+                  },
                   validator: (value) {
                     if (value.isEmpty || value.length < 1) {
                       return 'Invalid password';
@@ -215,6 +224,9 @@ class _AuthCardState extends State<AuthCard> {
                     decoration: InputDecoration(labelText: 'Confirm Password'),
                     obscureText: true,
                     controller: _passwordController,
+                    onFieldSubmitted: (_) {
+                      _submit();
+                    },
                     validator: _authMode == AuthMode.Signup
                         ? (value) {
                             if (value != _passwordController.text) {

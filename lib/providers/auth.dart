@@ -9,10 +9,19 @@ class Auth with ChangeNotifier {
   DateTime _exp;
   String _userId;
 
+  bool get isAuth {
+    return token != null;
+  }
+
+  String get token {
+    if (_exp != null && _exp.isAfter(DateTime.now()) && _token != null) {
+      return _token;
+    }
+    return null;
+  }
+
   void _authenticate(
       String mobileNumber, String password, String action) async {
-    print(mobileNumber);
-    print(password);
     try {
       final urlData =
           'https://kalps-esanskar-backend.herokuapp.com/api/users/$action';
@@ -28,11 +37,20 @@ class Auth with ChangeNotifier {
         }),
       );
       final responseData = json.decode(resp.body);
-      print(responseData);
-      if (responseData['message']) {
+      if (true) {
+        _token = responseData['data']['token'];
+        _userId = responseData['data']['userId'];
+        _exp = DateTime.now().add(
+          Duration(
+            // seconds: responseData['expiresIn'],
+            seconds: 10000,
+          ),
+        );
+        print(responseData);
+        notifyListeners();
+      } else {
         throw HttpException(responseData['message']);
       }
-
     } catch (e) {
       throw e;
     }
