@@ -9,6 +9,7 @@ import 'package:fluttershop/screens/edit_product_screen.dart';
 import 'package:fluttershop/screens/orders_screen.dart';
 import 'package:fluttershop/screens/product_detail_screen.dart';
 import 'package:fluttershop/screens/product_overview_screen.dart';
+import 'package:fluttershop/screens/splash_screen.dart';
 import 'package:fluttershop/screens/user_products_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttershop/widgets/new_video.dart';
@@ -45,7 +46,16 @@ class MyApp extends StatelessWidget {
             accentColor: Colors.deepOrange,
             fontFamily: 'Lato',
           ),
-          home: auth.isAuth ? ProductOverviewScreen() : AuthScreen(),
+          home: auth.isAuth
+              ? ProductOverviewScreen()
+              : FutureBuilder(
+                  future: auth.tryAutoLogin(),
+                  builder: (ctx, authResultSnamshop) =>
+                      authResultSnamshop.connectionState ==
+                              ConnectionState.waiting
+                          ? SplashScreen()
+                          : AuthScreen(),
+                ),
           // home: SamplePlayer(),
           routes: {
             CartScreen.routeName: (c) => CartScreen(),
