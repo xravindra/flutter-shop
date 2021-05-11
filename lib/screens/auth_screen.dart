@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:fluttershop/models/http_exception.dart';
 import 'package:fluttershop/providers/auth.dart';
 import 'package:provider/provider.dart';
 
@@ -97,6 +98,24 @@ class _AuthCardState extends State<AuthCard> {
   bool _isLoading = false;
   final _passwordController = TextEditingController();
 
+  void _showAlertDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('An error occured.'),
+        content: Text(message),
+        actions: [
+          FlatButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   void _submit() async {
     if (!_formKey.currentState.validate()) {
       // invalid
@@ -106,19 +125,28 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
-    if (_authMode == AuthMode.Login) {
-      //login
-      await Provider.of<Auth>(context, listen: false).login(
-        _authData['mobileNumber'],
-        _authData['password'],
-      );
-    } else {
-      // signup
-      await Provider.of<Auth>(context, listen: false).signup(
-        _authData['mobileNumber'],
-        _authData['password'],
-      );
+    try {
+      if (_authMode == AuthMode.Login) {
+        //login
+        await Provider.of<Auth>(context, listen: false).login(
+          _authData['mobileNumber'],
+          _authData['password'],
+        );
+      } else {
+        // signup
+        await Provider.of<Auth>(context, listen: false).signup(
+          _authData['mobileNumber'],
+          _authData['password'],
+        );
+      }
+    } on HttpException catch (error) {
+      var errorMessage = 'Authentication Failed!';
+      _showAlertDialog(errorMessage);
+    } catch (e) {
+      var errorMessage = 'Could not authenticate!';
+      _showAlertDialog(errorMessage);
     }
+
     setState(() {
       _isLoading = false;
     });
@@ -173,7 +201,7 @@ class _AuthCardState extends State<AuthCard> {
                   obscureText: true,
                   controller: _passwordController,
                   validator: (value) {
-                    if (value.isEmpty || value.length < 3) {
+                    if (value.isEmpty || value.length < 1) {
                       return 'Invalid password';
                     }
                   },
@@ -221,7 +249,7 @@ class _AuthCardState extends State<AuthCard> {
                 ),
                 FlatButton(
                   child: Text(
-                    '${_authMode == AuthMode.Signup ? 'SIGN UP' : 'LOGIN'} INSTEAD',
+                    '${_authMode == AuthMode.Signup ? 'LOGIN' : 'SIGN UP'} INSTEAD',
                   ),
                   onPressed: _switchAuthMode,
                   padding: EdgeInsets.symmetric(

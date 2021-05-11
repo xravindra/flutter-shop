@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
+import 'package:fluttershop/models/http_exception.dart';
 import 'package:http/http.dart' as http;
 
 class Auth with ChangeNotifier {
@@ -19,24 +20,29 @@ class Auth with ChangeNotifier {
         Uri.parse(urlData),
         headers: {
           'Content-Type': 'application/json',
-          'mode': 'no-cors',
         },
         body: json.encode({
           'mobileNumber': mobileNumber,
           'password': password,
+          'confirmPassword': password,
         }),
       );
-      print(json.decode(resp.body));
+      final responseData = json.decode(resp.body);
+      print(responseData);
+      if (responseData['message']) {
+        throw HttpException(responseData['message']);
+      }
+
     } catch (e) {
-      print(e);
+      throw e;
     }
   }
 
-  Future<void> login(String mobileNumber, String password) {
-    _authenticate(mobileNumber, password, 'login');
+  Future<void> login(String mobileNumber, String password) async {
+    return _authenticate(mobileNumber, password, 'login');
   }
 
-  Future<void> signup(String mobileNumber, String password) {
-    _authenticate(mobileNumber, password, 'sign-up');
+  Future<void> signup(String mobileNumber, String password) async {
+    return _authenticate(mobileNumber, password, 'sign-up');
   }
 }
