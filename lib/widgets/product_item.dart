@@ -19,8 +19,12 @@ class ProductItem extends StatelessWidget {
               arguments: product.id,
             );
           },
-          child: Image.network(
-            product.imageURL,
+          child: FadeInImage(
+            placeholder: NetworkImage(
+                'https://images.bewakoof.com/web/yellow_loader.gif'),
+            image: NetworkImage(
+              product.imageURL,
+            ),
             fit: BoxFit.cover,
           ),
         ),
