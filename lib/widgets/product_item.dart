@@ -19,13 +19,16 @@ class ProductItem extends StatelessWidget {
               arguments: product.id,
             );
           },
-          child: FadeInImage(
-            placeholder: NetworkImage(
-                'https://images.bewakoof.com/web/yellow_loader.gif'),
-            image: NetworkImage(
-              product.imageURL,
+          child: Hero(
+            tag: product.id,
+            child: FadeInImage(
+              placeholder: NetworkImage(
+                  'https://images.bewakoof.com/web/yellow_loader.gif'),
+              image: NetworkImage(
+                product.imageURL,
+              ),
+              fit: BoxFit.cover,
             ),
-            fit: BoxFit.cover,
           ),
         ),
         footer: GridTileBar(
